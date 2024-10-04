@@ -5,6 +5,8 @@ import (
     "bytes"
     "fmt"
     "os"
+	"io"
+	"strings"
 
     "golang.org/x/term"
     "gopkg.in/yaml.v3"
@@ -71,6 +73,12 @@ func DumpLLB(format string, def *llb.Definition, color bool) error {
     switch format {
     case "llb":
         return llb.WriteTo(def, os.Stdout)
+    case "dot":
+        ops, err := loadLLB(def)
+        if err != nil {
+            return err
+        }
+        writeDot(ops, os.Stdout)
     case "json":
         ops, err := loadLLB(def)
         if err != nil {
@@ -155,3 +163,63 @@ type llbOp struct {
     OpMetadata pb.OpMetadata
 }
 
+
+func writeDot(ops []llbOp, w io.Writer) {
+	// TODO: print OpMetadata
+	fmt.Fprintln(w, "digraph {")
+	defer fmt.Fprintln(w, "}")
+	for _, op := range ops {
+		name, shape := attr(op.Digest, op.Op)
+		fmt.Fprintf(w, "  %q [label=%q shape=%q];\n", op.Digest, name, shape)
+	}
+	for _, op := range ops {
+		for i, inp := range op.Op.Inputs {
+			label := ""
+			if eo, ok := op.Op.Op.(*pb.Op_Exec); ok {
+				for _, m := range eo.Exec.Mounts {
+					if int(m.Input) == i && m.Dest != "/" {
+						label = m.Dest
+					}
+				}
+			}
+			fmt.Fprintf(w, "  %q -> %q [label=%q];\n", inp.Digest, op.Digest, label)
+		}
+	}
+}
+
+func attr(dgst digest.Digest, op pb.Op) (string, string) {
+	switch op := op.Op.(type) {
+	case *pb.Op_Source:
+		return op.Source.Identifier, "ellipse"
+	case *pb.Op_Exec:
+		return strings.Join(op.Exec.Meta.Args, " "), "box"
+	case *pb.Op_Build:
+		return "build", "box3d"
+	case *pb.Op_Merge:
+		return "merge", "invtriangle"
+	case *pb.Op_Diff:
+		return "diff", "doublecircle"
+	case *pb.Op_File:
+		names := []string{}
+
+		for _, action := range op.File.Actions {
+			var name string
+
+			switch act := action.Action.(type) {
+			case *pb.FileAction_Copy:
+				name = fmt.Sprintf("copy{src=%s, dest=%s}", act.Copy.Src, act.Copy.Dest)
+			case *pb.FileAction_Mkfile:
+				name = fmt.Sprintf("mkfile{path=%s}", act.Mkfile.Path)
+			case *pb.FileAction_Mkdir:
+				name = fmt.Sprintf("mkdir{path=%s}", act.Mkdir.Path)
+			case *pb.FileAction_Rm:
+				name = fmt.Sprintf("rm{path=%s}", act.Rm.Path)
+			}
+
+			names = append(names, name)
+		}
+		return strings.Join(names, ","), "note"
+	default:
+		return dgst.String(), "plaintext"
+	}
+}

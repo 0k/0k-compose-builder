@@ -22,7 +22,7 @@ func main() {
                     &cli.StringFlag{
                         Name:    "format",
                         Aliases: []string{"f"},
-                        Usage:   "Output format (llb, json, or yaml)",
+                        Usage:   "Output format (llb, json, dot or yaml)",
                         Value:   "llb",
                     },
                     &cli.BoolFlag{
