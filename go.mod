@@ -3,10 +3,11 @@ module github.com/0k/0k-compose-builder
 go 1.22.2
 
 require (
-	github.com/alecthomas/chroma v0.10.0
+	github.com/alecthomas/chroma/v2 v2.14.0
 	github.com/moby/buildkit v0.16.0
 	github.com/opencontainers/go-digest v1.0.0
 	github.com/urfave/cli/v2 v2.27.4
+	golang.org/x/term v0.20.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -22,7 +23,7 @@ require (
 	github.com/containerd/typeurl/v2 v2.2.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/distribution/reference v0.6.0 // indirect
-	github.com/dlclark/regexp2 v1.4.0 // indirect
+	github.com/dlclark/regexp2 v1.11.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

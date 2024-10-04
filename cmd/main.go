@@ -25,9 +25,14 @@ func main() {
                         Usage:   "Output format (llb, json, or yaml)",
                         Value:   "llb",
                     },
+                    &cli.BoolFlag{
+                        Name:  "color",
+                        Usage: "Force syntax highlighting",
+                    },
                 },
                 Action: func(c *cli.Context) error {
                     format := c.String("format")
+                    color := c.Bool("color")
                     ctx := context.Background()
                     buildCtx, err := NewBuildContext()
                     if err != nil {
@@ -37,7 +42,7 @@ func main() {
                     if err != nil {
                         return err
                     }
-                    return dump.DumpLLB(format, def)
+                    return dump.DumpLLB(format, def, color)
                 },
             },
         },
