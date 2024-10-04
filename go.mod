@@ -3,10 +3,11 @@ module github.com/0k/0k-compose-builder
 go 1.22.2
 
 require (
+	github.com/alecthomas/chroma v0.10.0
 	github.com/moby/buildkit v0.16.0
 	github.com/opencontainers/go-digest v1.0.0
-	github.com/urfave/cli v1.22.15
-	google.golang.org/protobuf v1.34.2
+	github.com/urfave/cli/v2 v2.27.4
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -21,6 +22,7 @@ require (
 	github.com/containerd/typeurl/v2 v2.2.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.4 // indirect
 	github.com/distribution/reference v0.6.0 // indirect
+	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -40,6 +42,7 @@ require (
 	github.com/secure-systems-lab/go-securesystemslib v0.4.0 // indirect
 	github.com/shibumi/go-pathspec v1.3.0 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/xrash/smetrics v0.0.0-20240521201337-686a1a2994c1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.46.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace v0.46.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.46.1 // indirect
@@ -54,4 +57,5 @@ require (
 	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240123012728-ef4313101c80 // indirect
 	google.golang.org/grpc v1.62.0 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 )
