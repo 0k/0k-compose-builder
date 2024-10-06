@@ -14,6 +14,7 @@ type BuildContext struct {
     ConfigStorePath   string
     RelationDataPath  string
     DockerComposePath string
+	ComposeCachePath  string
 }
 
 
@@ -34,6 +35,7 @@ func BuildLLB(ctx context.Context, bctx *BuildContext) (*llb.Definition, error) 
             llb.AddMount(bctx.ConfigStorePath, configstore),
             llb.AddMount(bctx.DockerComposePath, dockerCompose),
             llb.AddMount(bctx.RelationDataPath, relation),
+            llb.AddHostBindMount(bctx.ComposeCachePath, bctx.ComposeCachePath),
         )
 
         configstoreState = runState.GetMount(bctx.ConfigStorePath)

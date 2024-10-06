@@ -25,6 +25,8 @@ func NewBuildContext() (*internal.BuildContext, error) {
         return nil, fmt.Errorf("CONFIGSTORE path %s does not exist", configStorePath)
     }
 
+	composeCachePath := getEnv("COMPOSE_CACHE", "/var/cache/compose")
+	
     relationDataPath := getEnv("RELATION_DATA", "/var/lib/compose/relations")
     dockerComposePath := getEnv("DOCKER_COMPOSE_FRAGMENTS", "/var/lib/compose/docker-compose-fragments")
 
@@ -35,6 +37,7 @@ func NewBuildContext() (*internal.BuildContext, error) {
         ConfigStorePath:   configStorePath,
         RelationDataPath:  relationDataPath,
         DockerComposePath: dockerComposePath,
+		ComposeCachePath:  composeCachePath,
     }, nil
 }
 
