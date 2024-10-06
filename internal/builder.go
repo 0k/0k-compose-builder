@@ -26,16 +26,15 @@ func BuildLLB(ctx context.Context, bctx *BuildContext) (*llb.Definition, error) 
     relation := llb.Scratch()
     configstore := llb.Scratch()
     dockerCompose := llb.Scratch()
-    charmstore := llb.Local("charm-store")
 
     run := func(configstoreState llb.State, relationState llb.State, cmd llb.RunOption) (llb.State, llb.State) {
         runState := runner.Run(
             cmd,
-            llb.AddMount(bctx.CharmStorePath, charmstore),
             llb.AddMount(bctx.ConfigStorePath, configstore),
             llb.AddMount(bctx.DockerComposePath, dockerCompose),
             llb.AddMount(bctx.RelationDataPath, relation),
             llb.AddHostBindMount(bctx.ComposeCachePath, bctx.ComposeCachePath),
+            llb.AddHostBindMount(bctx.CharmStorePath, bctx.CharmStorePath),
         )
 
         configstoreState = runState.GetMount(bctx.ConfigStorePath)
