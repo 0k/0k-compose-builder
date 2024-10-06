@@ -17,6 +17,9 @@ import (
     "github.com/moby/buildkit/client/llb"
     "github.com/moby/buildkit/solver/pb"
     digest "github.com/opencontainers/go-digest"
+	"github.com/pkg/errors"
+	"google.golang.org/protobuf/proto"
+
 )
 
 
@@ -142,25 +145,24 @@ func DumpLLB(format string, def *llb.Definition, color bool) error {
     return nil
 }
 
-
 func loadLLB(def *llb.Definition) ([]llbOp, error) {
-    var ops []llbOp
-    for _, dt := range def.Def {
-        var op pb.Op
-        if err := (&op).Unmarshal(dt); err != nil {
-            return nil, fmt.Errorf("failed to parse op: %w", err)
+        var ops []llbOp
+        for _, dt := range def.Def {
+                var op pb.Op
+                if err := proto.Unmarshal(dt, &op); err != nil {
+                        return nil, errors.Wrap(err, "failed to parse op")
+                }
+                dgst := digest.FromBytes(dt)
+                ent := llbOp{Op: &op, Digest: dgst, OpMetadata: def.Metadata[dgst].ToPB()}
+                ops = append(ops, ent)
         }
-        dgst := digest.FromBytes(dt)
-        ent := llbOp{Op: op, Digest: dgst, OpMetadata: def.Metadata[dgst]}
-        ops = append(ops, ent)
-    }
-    return ops, nil
+        return ops, nil
 }
 
 type llbOp struct {
-    Op         pb.Op
+    Op         *pb.Op
     Digest     digest.Digest
-    OpMetadata pb.OpMetadata
+    OpMetadata *pb.OpMetadata
 }
 
 
@@ -169,7 +171,7 @@ func writeDot(ops []llbOp, w io.Writer) {
 	fmt.Fprintln(w, "digraph {")
 	defer fmt.Fprintln(w, "}")
 	for _, op := range ops {
-		name, shape := attr(op.Digest, op.Op)
+		name, shape := attr(op.Digest, *op.Op)
 		fmt.Fprintf(w, "  %q [label=%q shape=%q];\n", op.Digest, name, shape)
 	}
 	for _, op := range ops {
