@@ -146,17 +146,17 @@ func DumpLLB(format string, def *llb.Definition, color bool) error {
 }
 
 func loadLLB(def *llb.Definition) ([]llbOp, error) {
-        var ops []llbOp
-        for _, dt := range def.Def {
-                var op pb.Op
-                if err := proto.Unmarshal(dt, &op); err != nil {
-                        return nil, errors.Wrap(err, "failed to parse op")
-                }
-                dgst := digest.FromBytes(dt)
-                ent := llbOp{Op: &op, Digest: dgst, OpMetadata: def.Metadata[dgst].ToPB()}
-                ops = append(ops, ent)
-        }
-        return ops, nil
+	var ops []llbOp
+	for _, dt := range def.Def {
+		var op pb.Op
+		if err := proto.Unmarshal(dt, &op); err != nil {
+			return nil, errors.Wrap(err, "failed to parse op")
+		}
+		dgst := digest.FromBytes(dt)
+		ent := llbOp{Op: &op, Digest: dgst, OpMetadata: def.Metadata[dgst].ToPB()}
+		ops = append(ops, ent)
+	}
+	return ops, nil
 }
 
 type llbOp struct {

@@ -2,6 +2,7 @@ package main
 
 import (
     "context"
+	"fmt"
     "log"
     "os"
     "github.com/urfave/cli/v2"
@@ -31,10 +32,17 @@ func main() {
                     },
                 },
                 Action: func(c *cli.Context) error {
+					// Get the positional argument
+                    if c.Args().Len() < 1 {
+                        return fmt.Errorf("scriptsPath and statePath arguments are required")
+                    }
+                    scriptsPath := c.Args().Get(0)
+					statePath := c.Args().Get(1)
+
                     format := c.String("format")
                     color := c.Bool("color")
                     ctx := context.Background()
-                    buildCtx, err := NewBuildContext()
+                    buildCtx, err := NewBuildContext(scriptsPath, statePath)
                     if err != nil {
                         return err
                     }
